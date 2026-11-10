@@ -1,0 +1,154 @@
+<UserControl x:Class="WpfApp1.Views.DashboardPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:WpfApp1.Controls"
+             Background="{StaticResource BackgroundBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <Grid Margin="0,0,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Button Content="Оформить отправление" Style="{StaticResource PrimaryButton}" Click="Shipments_Click" />
+                    <Button Content="Каталог товаров" Style="{StaticResource SecondaryButton}" Margin="10,0,0,0" Click="Products_Click" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,18,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <controls:StatCard x:Name="CardTotal" Title="ВСЕГО ОТПРАВЛЕНИЙ" Value="0" Hint="за всё время работы" Icon="&#xE715;"
+                                   IconBackground="#E8F0FB" IconForeground="{StaticResource PrimaryBrush}" />
+                <controls:StatCard x:Name="CardToday" Grid.Column="2" Title="СЕГОДНЯ ОФОРМЛЕНО" Value="0" Hint="принято операторами" Icon="&#xE787;"
+                                   IconBackground="#FDF4E3" IconForeground="{StaticResource WarningBrush}" />
+                <controls:StatCard x:Name="CardRevenue" Grid.Column="4" Title="ВЫРУЧКА ЗА МЕСЯЦ" Value="0 ₽" Hint="отправления и товары" Icon="&#xE8C7;"
+                                   IconBackground="#E7F7F0" IconForeground="{StaticResource SuccessBrush}" />
+                <controls:StatCard x:Name="CardStock" Grid.Column="6" Title="ТОВАРОВ НА СКЛАДЕ" Value="0" Hint="единиц в каталоге" Icon="&#xE7B8;"
+                                   IconBackground="#FDECEE" IconForeground="{StaticResource AccentBrush}" />
+            </Grid>
+
+            <Grid Margin="0,18,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="380" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid Margin="20,18,20,10">
+                            <StackPanel>
+                                <TextBlock Text="Последние отправления" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Оперативная сводка по кассовому окну" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                            </StackPanel>
+                            <Button Content="Все отправления" Style="{StaticResource SmallButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="Shipments_Click" />
+                        </Grid>
+                        <DataGrid x:Name="RecentGrid" Grid.Row="1" Margin="8,0" MaxHeight="360"
+                                  MouseDoubleClick="RecentGrid_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="135" />
+                                <DataGridTemplateColumn Header="Тип" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding TypeImage, Converter={StaticResource ImagePath}}" Width="26" Height="26" Stretch="Uniform" />
+                                                <TextBlock Text="{Binding TypeName}" Margin="6,0,0,0" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Получатель" Binding="{Binding RecipientName}" Width="*" />
+                                <DataGridTextColumn Header="Стоимость" Binding="{Binding CostText}" Width="100" />
+                                <DataGridTemplateColumn Header="Статус" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource StatusBadge}" Background="{Binding Status, Converter={StaticResource StatusBg}}">
+                                                <TextBlock Text="{Binding Status}" FontSize="11.5" FontWeight="SemiBold"
+                                                           Foreground="{Binding Status, Converter={StaticResource StatusBrush}}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Border Grid.Row="2" Background="#F7F8FA" CornerRadius="0,0,6,6" Padding="20,10">
+                            <TextBlock x:Name="RecentFooter" Text="Загрузка…" Style="{StaticResource MutedText}" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource Card}" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="Отправления за 7 дней" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="Количество принятых отправлений" Style="{StaticResource MutedText}" Margin="0,3,0,12" />
+                            <ItemsControl x:Name="WeekChart">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Rows="1" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="3,0">
+                                            <TextBlock Text="{Binding Count}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center" />
+                                            <Grid Height="120">
+                                                <Border Height="{Binding BarHeight}" Width="26" CornerRadius="2" VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                                        Background="{StaticResource PrimaryLightBrush}" />
+                                            </Grid>
+                                            <TextBlock Text="{Binding Label}" FontSize="10.5" Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Card}" Padding="18" Margin="0,16,0,0">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Почтовые товары" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="Популярные позиции каталога" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <Button Content="Каталог" Style="{StaticResource SmallButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="Products_Click" />
+                            </Grid>
+                            <ItemsControl x:Name="TopProducts" Margin="0,12,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="46" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="42" Height="42" CornerRadius="4" Background="#F0F2F5" ClipToBounds="True">
+                                                <Image Source="{Binding ImageFile, Converter={StaticResource ImagePath}}" Stretch="UniformToFill" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="12.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding StockText}" Style="{StaticResource MutedText}" FontSize="11" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="2" Text="{Binding PriceText}" FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

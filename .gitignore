@@ -1,0 +1,16 @@
+# Visual Studio and generated files
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.pdb
+*.log
+*.mdf
+*.ldf
+startup_error.txt
+screenshots_error.txt
+selftest.txt
+.env
+.env.*
+/WpfApp1/Assets/Diagrams/

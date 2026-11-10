@@ -1,0 +1,128 @@
+<Window x:Class="WpfApp1.Views.ShipmentEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отправление" Height="720" Width="820"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{StaticResource BackgroundBrush}" FontFamily="{StaticResource AppFont}">
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="2,0,0,16">
+            <TextBlock x:Name="TitleText" Text="Новое отправление" Style="{StaticResource PageTitle}" />
+            <TextBlock x:Name="SubtitleText" Text="Заполните данные отправителя, получателя и параметры отправления"
+                       Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="18" />
+                <ColumnDefinition Width="292" />
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Card}" Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="ТИП ОТПРАВЛЕНИЯ" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="TypeCombo" DisplayMemberPath="Name" SelectionChanged="TypeCombo_SelectionChanged" />
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="ОТПРАВИТЕЛЬ" Style="{StaticResource FieldLabel}" />
+                                <ComboBox x:Name="SenderCombo" DisplayMemberPath="FullName" />
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="+" Style="{StaticResource SecondaryButton}" Width="38" Padding="0"
+                                    VerticalAlignment="Bottom" ToolTip="Добавить клиента" Click="AddClient_Click" Tag="sender" />
+                        </Grid>
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="ПОЛУЧАТЕЛЬ" Style="{StaticResource FieldLabel}" />
+                                <ComboBox x:Name="RecipientCombo" DisplayMemberPath="FullName" />
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="+" Style="{StaticResource SecondaryButton}" Width="38" Padding="0"
+                                    VerticalAlignment="Bottom" ToolTip="Добавить клиента" Click="AddClient_Click" Tag="recipient" />
+                        </Grid>
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="ВЕС, КГ" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="WeightBox" Style="{StaticResource InputTextBox}" TextChanged="WeightBox_TextChanged" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="ДАТА ОФОРМЛЕНИЯ" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="DateBox" Style="{StaticResource InputTextBox}" IsReadOnly="True" Background="#F2F5F9" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="КОММЕНТАРИЙ" Style="{StaticResource FieldLabel}" Margin="0,16,0,6" />
+                        <TextBox x:Name="CommentBox" Style="{StaticResource InputTextArea}" MaxLength="300" />
+
+                        <TextBlock x:Name="ErrorText" Foreground="{StaticResource AccentBrush}" FontSize="12.5" TextWrapping="Wrap"
+                                   Margin="0,12,0,0" Visibility="Collapsed" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <StackPanel Grid.Column="2">
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <StackPanel>
+                        <Border Height="158" CornerRadius="4,4,0,0" Background="#EEF4FC" ClipToBounds="True">
+                            <Image x:Name="TypeImage" Stretch="UniformToFill" />
+                        </Border>
+                        <StackPanel Margin="16">
+                            <TextBlock x:Name="TypeNameText" FontSize="16" FontWeight="SemiBold" />
+                            <TextBlock x:Name="TypeDescriptionText" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Margin="0,14,0,0" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="РАСЧЁТ СТОИМОСТИ" Style="{StaticResource CaptionText}" />
+                        <TextBlock x:Name="TariffText" Text="Выберите тип и укажите вес" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                        <TextBlock x:Name="CostText" Text="0,00 ₽" FontSize="30" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" Margin="0,8,0,0" />
+                        <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,12" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Top" />
+                            <TextBlock Text="Стоимость рассчитывается автоматически по действующему тарифу и фиксируется в отправлении."
+                                       Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap" Margin="6,0,0,0" MaxWidth="210" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#FDF4E3" CornerRadius="4" Padding="12" Margin="0,14,0,0">
+                    <TextBlock x:Name="StatusHint" Text="После сохранения отправлению присваивается уникальный номер и статус «Принято»."
+                               Foreground="#8A5A12" FontSize="11.5" TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Отмена" Style="{StaticResource GhostButton}" Width="120" Click="Cancel_Click" />
+                <Button x:Name="SaveButton" Content="Сохранить отправление" Style="{StaticResource PrimaryButton}" Width="200" Margin="10,0,0,0" Click="Save_Click" />
+            </StackPanel>
+            <TextBlock x:Name="NumberText" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

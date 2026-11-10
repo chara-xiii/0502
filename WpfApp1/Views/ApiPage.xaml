@@ -1,0 +1,142 @@
+<UserControl x:Class="WpfApp1.Views.ApiPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}" Padding="18">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="СОСТОЯНИЕ СЕРВЕРА" Style="{StaticResource CaptionText}" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource SuccessBrush}" VerticalAlignment="Center" />
+                                <TextBlock x:Name="StatusText" Text="API работает" FontSize="18" FontWeight="SemiBold" Margin="8,0,0,0" />
+                            </StackPanel>
+                            <TextBlock x:Name="BaseUrlText" Style="{StaticResource MutedText}" Margin="0,6,0,0" />
+                        </StackPanel>
+                        <TextBlock Text="&#xE774;" FontFamily="{StaticResource IconFont}" FontSize="30" Foreground="#D5E4F6" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                    </Grid>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="ОБРАБОТАНО ЗАПРОСОВ" Style="{StaticResource CaptionText}" />
+                        <TextBlock x:Name="RequestCountText" Text="0" FontSize="26" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock x:Name="UptimeText" Text="Журнал запросов ниже" Style="{StaticResource MutedText}" Margin="0,6,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Style="{StaticResource Card}" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="ДОКУМЕНТАЦИЯ" Style="{StaticResource CaptionText}" />
+                        <TextBlock Text="OpenAPI 3.0.3" FontSize="18" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Button Content="Swagger" Style="{StaticResource SmallButton}" Click="OpenSwagger_Click" />
+                            <Button Content="OpenAPI JSON" Style="{StaticResource GhostButton}" Height="30" Padding="12,0" Margin="6,0,0,0" Click="OpenJson_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource Card}" Padding="18" Margin="0,16,0,0">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Управление сервером" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Text="API встроено в WPF-приложение и использует ту же базу данных MS SQL Server."
+                                   Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="StartButton" Content="Запустить API" Style="{StaticResource SecondaryButton}" Click="Start_Click" Margin="0,0,8,0" />
+                        <Button x:Name="StopButton" Content="Остановить API" Style="{StaticResource GhostButton}" Click="Stop_Click" Margin="0,0,8,0" />
+                        <Button Content="Открыть документацию" Style="{StaticResource PrimaryButton}" Click="OpenSwagger_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="420" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <Border Style="{StaticResource Card}" Padding="18">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Конечные точки API" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="Основные маршруты REST-интерфейса" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <Border Background="#E8F0FB" CornerRadius="4" Padding="10,5" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock Text="JWT Bearer" Foreground="{StaticResource PrimaryBrush}" FontSize="11" FontWeight="SemiBold" />
+                                </Border>
+                            </Grid>
+                            <ItemsControl x:Name="EndpointsList" Margin="0,12,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="64" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Background="{Binding Color}" CornerRadius="6" Padding="6,3" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Method}" Foreground="White" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                <TextBlock Text="{Binding Path}" FontFamily="Consolas" FontSize="12.5" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Description}" Style="{StaticResource MutedText}" FontSize="10.5" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Card}" Padding="18" Margin="0,16,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Токен текущего пользователя" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="JWT формируется для демонстрации запросов из Postman или Swagger UI."
+                                       Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                            <TextBox x:Name="TokenBox" Style="{StaticResource InputTextArea}" Height="86" IsReadOnly="True" Margin="0,10,0,0"
+                                     FontFamily="Consolas" FontSize="10.5" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Button Content="Сформировать токен" Style="{StaticResource SecondaryButton}" Click="GenerateToken_Click" />
+                                <Button Content="Копировать" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="CopyToken_Click" />
+                                <TextBlock x:Name="TokenHint" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <Border Style="{StaticResource Card}" Padding="18">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="Журнал запросов" Style="{StaticResource SectionTitle}" />
+                                <Button Content="Очистить" Style="{StaticResource SmallButton}" HorizontalAlignment="Right" Click="ClearLog_Click" />
+                            </Grid>
+                            <ListBox x:Name="LogList" Height="280" Margin="0,10,0,0" BorderThickness="0" Background="#F8FAFD"
+                                     FontFamily="Consolas" FontSize="10.5" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}" Padding="18" Margin="0,16,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Пример запроса" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="Получение списка отправлений" Style="{StaticResource MutedText}" Margin="0,3,0,8" />
+                            <TextBox Style="{StaticResource InputTextArea}" Height="104" IsReadOnly="True" FontFamily="Consolas" FontSize="10.5"
+                                     Text="curl -H &quot;Authorization: Bearer &lt;token&gt;&quot; http://localhost:5080/api/shipments" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
